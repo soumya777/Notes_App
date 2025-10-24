@@ -1,0 +1,62 @@
+﻿@using Notes_App.Domain.Entities
+@model IEnumerable<Note>
+
+@{
+    ViewData["Title"] = "Notes";
+}
+
+<h2 class="mb-3">Notes</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <a asp-action="Create" class="btn btn-primary">Create New Note</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="text-muted">No notes found. Create one to get started.</div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
+        @foreach (var note in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title text-truncate" title="@note.Title">@note.Title</h5>
+                        <p class="card-text mb-2">
+                            @{
+                                var preview = (note.Content ?? string.Empty);
+                                var truncated = preview.Length > 160 ? preview.Substring(0, 160) + "..." : preview;
+                            }
+                            @truncated
+                        </p>
+                        <div class="mt-auto">
+                            <small class="text-muted d-block">
+                                Created: @note.CreatedAt.ToString("g")
+                            </small>
+                            <small class="text-muted d-block">
+                                Updated: @note.UpdatedAt.ToString("g")
+                            </small>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0 pt-0">
+                        <div class="d-flex gap-2">
+                            <a asp-action="Edit" asp-route-id="@note.Id" class="btn btn-sm btn-outline-warning">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@note.Id" class="btn btn-sm btn-outline-danger">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
